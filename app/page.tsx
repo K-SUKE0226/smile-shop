@@ -7,6 +7,7 @@ export default function Home() {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [productName, setProductName] = useState<string>('');
   const [showHelp, setShowHelp] = useState<boolean>(false);
+  const [showTemplate, setShowTemplate] = useState<boolean>(false);
   const [results, setResults] = useState<{
     productName: string;
   } | null>(null);
@@ -110,10 +111,111 @@ export default function Home() {
         </div>
 
         {results && (
-          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">{results.productName}</h2>
+          <>
+            {/* 出品テンプレート */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">📝 出品テンプレート</h2>
+                <button
+                  onClick={() => setShowTemplate(!showTemplate)}
+                  className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
+                >
+                  {showTemplate ? '閉じる' : '表示する'}
+                </button>
+              </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {showTemplate && (
+                <div className="space-y-6">
+                  {/* タイトル案 */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      タイトル案（メルカリ向け）
+                    </label>
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                      <p className="text-gray-800">【美品】{results.productName}</p>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`【美品】${results.productName}`);
+                          alert('コピーしました！');
+                        }}
+                        className="mt-2 text-xs text-indigo-600 hover:text-indigo-800"
+                      >
+                        📋 コピー
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 説明文案 */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      説明文テンプレート
+                    </label>
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                      <p className="text-gray-800 whitespace-pre-line text-sm">
+                        {`${results.productName}です。
+
+【商品の状態】
+目立った傷や汚れはありません。
+写真でご確認ください。
+
+【発送について】
+24時間以内に発送いたします。
+丁寧な梱包を心がけます。
+
+【注意事項】
+自宅保管品のため、神経質な方はご遠慮ください。
+即購入OKです！
+
+よろしくお願いいたします。`}
+                      </p>
+                      <button
+                        onClick={() => {
+                          const template = `${results.productName}です。
+
+【商品の状態】
+目立った傷や汚れはありません。
+写真でご確認ください。
+
+【発送について】
+24時間以内に発送いたします。
+丁寧な梱包を心がけます。
+
+【注意事項】
+自宅保管品のため、神経質な方はご遠慮ください。
+即購入OKです！
+
+よろしくお願いいたします。`;
+                          navigator.clipboard.writeText(template);
+                          alert('コピーしました！');
+                        }}
+                        className="mt-2 text-xs text-indigo-600 hover:text-indigo-800"
+                      >
+                        📋 コピー
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 価格目安 */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      💰 価格の目安
+                    </label>
+                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                      <p className="text-sm text-yellow-800">
+                        まずは各サイトで相場を確認してから価格を決めましょう。<br />
+                        相場より少し高めに設定して、値下げ交渉の余地を残すのがコツです。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 検索リンク */}
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">{results.productName}</h2>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <a
                 href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(results.productName)}`}
                 target="_blank"
@@ -183,6 +285,7 @@ export default function Home() {
               </a>
             </div>
           </div>
+          </>
         )}
       </div>
     </div>
