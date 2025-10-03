@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
             {
               type: 'image_url',
               image_url: {
-                url: \`data:\${mimeType};base64,\${base64Image}\`,
+                url: `data:${mimeType};base64,${base64Image}`,
               },
             },
           ],

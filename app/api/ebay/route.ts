@@ -59,9 +59,10 @@ export async function GET(request: NextRequest) {
     }
 
     // 価格情報を抽出（USD）
-    const prices: number[] = items
-      .map((item: any) => {
-        const price = parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || 0);
+    const prices: number[] = (items as unknown[])
+      .map((item: unknown) => {
+        const itemData = item as { sellingStatus?: Array<{ currentPrice?: Array<{ __value__?: string }> }> };
+        const price = parseFloat(itemData.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || '0');
         return price;
       })
       .filter((price: number) => price > 0);

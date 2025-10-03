@@ -6,7 +6,12 @@ export default function Home() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<{
+    productName: string;
+    mercari: { min: number; max: number; avg: number; count: number };
+    zenplus: { min: number; max: number; avg: number; count: number };
+    ebay: { min: number; max: number; avg: number; count: number; currency: string };
+  } | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
