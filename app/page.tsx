@@ -52,7 +52,6 @@ export default function Home() {
                 <input
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   onChange={handleImageUpload}
                   className="hidden"
                 />
