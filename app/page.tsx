@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
@@ -41,6 +42,18 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div></div>
+            <Link
+              href="/templates"
+              className="inline-flex items-center px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-indigo-600 font-medium text-sm"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              テンプレート管理
+            </Link>
+          </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">スマイルショップ</h1>
           <p className="text-gray-600">商品写真から相場をチェック</p>
         </header>
