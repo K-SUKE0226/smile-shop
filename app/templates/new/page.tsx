@@ -20,11 +20,50 @@ export default function NewTemplatePage() {
   const [manualMode, setManualMode] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleUrlChange = (index: number, value: string) => {
     const updated = [...referenceUrls];
     updated[index] = value;
     setReferenceUrls(updated);
+  };
+
+  const handleAnalyzeUrls = async () => {
+    const filledUrls = referenceUrls.filter(url => url.trim());
+    if (filledUrls.length === 0) {
+      alert('参考URLを最低1つ入力してください');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ urls: filledUrls }),
+      });
+
+      if (!response.ok) {
+        throw new Error('URLの解析に失敗しました');
+      }
+
+      const data = await response.json();
+
+      if (data.template) {
+        setTitle(data.template.title);
+        setDescription(data.template.description);
+        setManualMode(true); // 手動モードに切り替えて編集可能に
+        alert('URLからテンプレートを生成しました！内容を確認して保存してください。');
+      }
+    } catch (error) {
+      console.error('URL解析エラー:', error);
+      alert('URLの解析に失敗しました。手動モードで入力してください。');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSave = () => {
@@ -33,27 +72,16 @@ export default function NewTemplatePage() {
       return;
     }
 
-    if (manualMode) {
-      if (!title.trim() || !description.trim()) {
-        alert('タイトルと説明文を入力してください');
-        return;
-      }
-    } else {
-      const filledUrls = referenceUrls.filter(url => url.trim());
-      if (filledUrls.length === 0) {
-        alert('参考URLを最低1つ入力してください');
-        return;
-      }
-      // TODO: URL解析機能を実装
-      alert('URL解析機能は次のステップで実装します。今は手動モードをお使いください。');
+    if (!title.trim() || !description.trim()) {
+      alert('タイトルと説明文を入力してください');
       return;
     }
 
     const newTemplate: Template = {
       id: Date.now().toString(),
       category: category.trim(),
-      title: manualMode ? title.trim() : '',
-      description: manualMode ? description.trim() : '',
+      title: title.trim(),
+      description: description.trim(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -157,6 +185,13 @@ export default function NewTemplatePage() {
                   💡 複数のURLを入力すると、共通パターンを学習してテンプレートを生成します
                 </p>
               </div>
+              <button
+                onClick={handleAnalyzeUrls}
+                disabled={loading || referenceUrls.filter(url => url.trim()).length === 0}
+                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? '解析中...' : 'URLを解析してテンプレート生成'}
+              </button>
             </div>
           )}
 
