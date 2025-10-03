@@ -9,9 +9,6 @@ export default function Home() {
   const [showHelp, setShowHelp] = useState<boolean>(false);
   const [results, setResults] = useState<{
     productName: string;
-    mercari: { min: number; max: number; avg: number; count: number };
-    zenplus: { min: number; max: number; avg: number; count: number };
-    ebay: { min: number; max: number; avg: number; count: number; currency: string };
   } | null>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,9 +33,6 @@ export default function Home() {
 
     setResults({
       productName: searchQuery,
-      mercari: { min: 0, max: 0, avg: 0, count: 0 },
-      zenplus: { min: 0, max: 0, avg: 0, count: 0 },
-      ebay: { min: 0, max: 0, avg: 0, count: 0, currency: 'USD' },
     });
   };
 
@@ -128,7 +122,7 @@ export default function Home() {
               >
                 <h3 className="font-semibold text-red-800 mb-2 flex items-center justify-between">
                   <span>
-                    <span className="mr-2">🇯🇵</span> メルカリ
+                    <span className="mr-2">🛍️</span> メルカリ
                   </span>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -138,31 +132,31 @@ export default function Home() {
               </a>
 
               <a
-                href={`https://zenplus.jp/search?q=${encodeURIComponent(results.productName)}`}
+                href={`https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent(results.productName)}&va=${encodeURIComponent(results.productName)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-green-50 rounded-lg p-6 hover:bg-green-100 transition-colors border-2 border-green-200 hover:border-green-400"
+                className="bg-purple-50 rounded-lg p-6 hover:bg-purple-100 transition-colors border-2 border-purple-200 hover:border-purple-400"
               >
-                <h3 className="font-semibold text-green-800 mb-2 flex items-center justify-between">
+                <h3 className="font-semibold text-purple-800 mb-2 flex items-center justify-between">
                   <span>
-                    <span className="mr-2">🌏</span> ZenPlus
+                    <span className="mr-2">🔨</span> ヤフオク!
                   </span>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </h3>
-                <p className="text-sm text-green-700">タップして相場を確認</p>
+                <p className="text-sm text-purple-700">タップして相場を確認</p>
               </a>
 
               <a
-                href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(results.productName)}`}
+                href={`https://fril.jp/search/${encodeURIComponent(results.productName)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-blue-50 rounded-lg p-6 hover:bg-blue-100 transition-colors border-2 border-blue-200 hover:border-blue-400"
               >
                 <h3 className="font-semibold text-blue-800 mb-2 flex items-center justify-between">
                   <span>
-                    <span className="mr-2">🌐</span> eBay
+                    <span className="mr-2">🏪</span> ラクマ
                   </span>
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
