@@ -5,6 +5,8 @@ import { useState } from 'react';
 export default function Home() {
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [productName, setProductName] = useState<string>('');
+  const [showHelp, setShowHelp] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{
     productName: string;
@@ -26,28 +28,15 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    if (!image) return;
+    if (!productName.trim()) {
+      alert('商品名または特徴を入力してください');
+      return;
+    }
 
     setLoading(true);
     try {
-      // 1. 画像認識
-      const formData = new FormData();
-      formData.append('image', image);
-
-      const analyzeResponse = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!analyzeResponse.ok) {
-        throw new Error('画像認識に失敗しました');
-      }
-
-      const analyzeData = await analyzeResponse.json();
-      console.log('認識結果:', analyzeData);
-
-      // 2. 相場取得（並列実行）
-      const searchQuery = analyzeData.productName || analyzeData.keywords?.[0] || '商品';
+      // 相場取得（並列実行）
+      const searchQuery = productName.trim();
 
       const [mercariData, zenplusData, ebayData] = await Promise.all([
         fetch(`/api/mercari?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
@@ -56,7 +45,7 @@ export default function Home() {
       ]);
 
       setResults({
-        productName: analyzeData.productName || '商品名不明',
+        productName: searchQuery,
         mercari: mercariData,
         zenplus: zenplusData,
         ebay: ebayData,
@@ -104,12 +93,41 @@ export default function Home() {
             </label>
           </div>
 
+          {imagePreview && (
+            <div className="mb-6">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
+                商品名または特徴を入力
+              </label>
+              <input
+                type="text"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder="例：鬼滅の刃 マグカップ"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+
+              <button
+                onClick={() => setShowHelp(!showHelp)}
+                className="mt-2 text-sm text-indigo-600 hover:text-indigo-800 underline"
+              >
+                商品名が分からない？
+              </button>
+
+              {showHelp && (
+                <div className="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+                  <p className="font-semibold text-blue-900 mb-2">📱 スマホの場合：</p>
+                  <p className="text-blue-800">写真を長押し → Googleで画像検索</p>
+                </div>
+              )}
+            </div>
+          )}
+
           <button
             onClick={handleSubmit}
-            disabled={!image || loading}
+            disabled={!productName.trim() || loading}
             className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? '分析中...' : '相場を調べる'}
+            {loading ? '検索中...' : '相場を調べる'}
           </button>
         </div>
 
