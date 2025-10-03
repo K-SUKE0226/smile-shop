@@ -113,7 +113,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">{results.productName}</h2>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <a
                 href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(results.productName)}`}
                 target="_blank"
@@ -163,6 +163,23 @@ export default function Home() {
                   </svg>
                 </h3>
                 <p className="text-sm text-blue-700">タップして相場を確認</p>
+              </a>
+
+              <a
+                href={`https://zenplus.jp/search?q=${encodeURIComponent(results.productName)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-50 rounded-lg p-6 hover:bg-green-100 transition-colors border-2 border-green-200 hover:border-green-400"
+              >
+                <h3 className="font-semibold text-green-800 mb-2 flex items-center justify-between">
+                  <span>
+                    <span className="mr-2">🌏</span> ZenPlus
+                  </span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </h3>
+                <p className="text-sm text-green-700">タップして相場を確認</p>
               </a>
             </div>
           </div>
