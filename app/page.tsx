@@ -7,7 +7,6 @@ export default function Home() {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [productName, setProductName] = useState<string>('');
   const [showHelp, setShowHelp] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<{
     productName: string;
     mercari: { min: number; max: number; avg: number; count: number };
@@ -27,35 +26,20 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!productName.trim()) {
       alert('商品名または特徴を入力してください');
       return;
     }
 
-    setLoading(true);
-    try {
-      // 相場取得（並列実行）
-      const searchQuery = productName.trim();
+    const searchQuery = productName.trim();
 
-      const [mercariData, zenplusData, ebayData] = await Promise.all([
-        fetch(`/api/mercari?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
-        fetch(`/api/zenplus?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
-        fetch(`/api/ebay?q=${encodeURIComponent(searchQuery)}`).then(res => res.json()),
-      ]);
-
-      setResults({
-        productName: searchQuery,
-        mercari: mercariData,
-        zenplus: zenplusData,
-        ebay: ebayData,
-      });
-    } catch (error) {
-      console.error('エラー:', error);
-      alert('処理中にエラーが発生しました');
-    } finally {
-      setLoading(false);
-    }
+    setResults({
+      productName: searchQuery,
+      mercari: { min: 0, max: 0, avg: 0, count: 0 },
+      zenplus: { min: 0, max: 0, avg: 0, count: 0 },
+      ebay: { min: 0, max: 0, avg: 0, count: 0, currency: 'USD' },
+    });
   };
 
   return (
@@ -124,10 +108,10 @@ export default function Home() {
 
           <button
             onClick={handleSubmit}
-            disabled={!productName.trim() || loading}
+            disabled={!productName.trim()}
             className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            {loading ? '検索中...' : '相場を調べる'}
+            検索サイトを表示
           </button>
         </div>
 
@@ -135,78 +119,57 @@ export default function Home() {
           <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">{results.productName}</h2>
 
-            <div className="grid gap-6 md:grid-cols-3">
-              <div className="bg-red-50 rounded-lg p-4">
-                <h3 className="font-semibold text-red-800 mb-3 flex items-center">
-                  <span className="mr-2">🇯🇵</span> メルカリ
+            <div className="grid gap-4 md:grid-cols-3">
+              <a
+                href={`https://jp.mercari.com/search?keyword=${encodeURIComponent(results.productName)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-red-50 rounded-lg p-6 hover:bg-red-100 transition-colors border-2 border-red-200 hover:border-red-400"
+              >
+                <h3 className="font-semibold text-red-800 mb-2 flex items-center justify-between">
+                  <span>
+                    <span className="mr-2">🇯🇵</span> メルカリ
+                  </span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
                 </h3>
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最安値:</span>
-                    <span className="font-semibold">¥{results.mercari.min.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最高値:</span>
-                    <span className="font-semibold">¥{results.mercari.max.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">平均:</span>
-                    <span className="font-semibold text-red-600">¥{results.mercari.avg.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">出品数:</span>
-                    <span className="font-semibold">{results.mercari.count}件</span>
-                  </p>
-                </div>
-              </div>
+                <p className="text-sm text-red-700">タップして相場を確認</p>
+              </a>
 
-              <div className="bg-green-50 rounded-lg p-4">
-                <h3 className="font-semibold text-green-800 mb-3 flex items-center">
-                  <span className="mr-2">🌏</span> ZenPlus
+              <a
+                href={`https://zenplus.jp/search?q=${encodeURIComponent(results.productName)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-50 rounded-lg p-6 hover:bg-green-100 transition-colors border-2 border-green-200 hover:border-green-400"
+              >
+                <h3 className="font-semibold text-green-800 mb-2 flex items-center justify-between">
+                  <span>
+                    <span className="mr-2">🌏</span> ZenPlus
+                  </span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
                 </h3>
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最安値:</span>
-                    <span className="font-semibold">¥{results.zenplus.min.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最高値:</span>
-                    <span className="font-semibold">¥{results.zenplus.max.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">平均:</span>
-                    <span className="font-semibold text-green-600">¥{results.zenplus.avg.toLocaleString()}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">出品数:</span>
-                    <span className="font-semibold">{results.zenplus.count}件</span>
-                  </p>
-                </div>
-              </div>
+                <p className="text-sm text-green-700">タップして相場を確認</p>
+              </a>
 
-              <div className="bg-blue-50 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-800 mb-3 flex items-center">
-                  <span className="mr-2">🌐</span> eBay
+              <a
+                href={`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(results.productName)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-50 rounded-lg p-6 hover:bg-blue-100 transition-colors border-2 border-blue-200 hover:border-blue-400"
+              >
+                <h3 className="font-semibold text-blue-800 mb-2 flex items-center justify-between">
+                  <span>
+                    <span className="mr-2">🌐</span> eBay
+                  </span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
                 </h3>
-                <div className="space-y-2 text-sm">
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最安値:</span>
-                    <span className="font-semibold">${results.ebay.min}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">最高値:</span>
-                    <span className="font-semibold">${results.ebay.max}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">平均:</span>
-                    <span className="font-semibold text-blue-600">${results.ebay.avg}</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span className="text-gray-600">出品数:</span>
-                    <span className="font-semibold">{results.ebay.count}件</span>
-                  </p>
-                </div>
-              </div>
+                <p className="text-sm text-blue-700">タップして相場を確認</p>
+              </a>
             </div>
           </div>
         )}
