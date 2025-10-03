@@ -17,6 +17,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // APIキーが設定されていない場合はダミーデータを返す
+    if (!process.env.OPENAI_API_KEY) {
+      return NextResponse.json({
+        productName: 'サンプル商品（APIキー未設定）',
+        category: 'グッズ',
+        brand: '不明',
+        keywords: ['sample', 'サンプル'],
+      });
+    }
+
     // 画像をBase64に変換
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
@@ -68,9 +78,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('画像分析エラー:', error);
-    return NextResponse.json(
-      { error: '画像の分析に失敗しました' },
-      { status: 500 }
-    );
+
+    // エラー時もダミーデータを返す
+    return NextResponse.json({
+      productName: 'サンプル商品（認識エラー）',
+      category: 'グッズ',
+      brand: '不明',
+      keywords: ['sample', 'サンプル'],
+    });
   }
 }
