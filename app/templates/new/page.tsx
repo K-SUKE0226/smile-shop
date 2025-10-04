@@ -241,21 +241,35 @@ export default function NewTemplatePage() {
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <button
-              onClick={handleSave}
-              className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              保存
-            </button>
-            <Link
-              href="/templates"
-              className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center"
-            >
-              キャンセル
-            </Link>
-          </div>
+          {/* Action Buttons - 手動モードの時のみ表示 */}
+          {manualMode && (
+            <div className="flex gap-3 pt-4">
+              <button
+                onClick={handleSave}
+                className="flex-1 bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              >
+                保存
+              </button>
+              <Link
+                href="/templates"
+                className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center"
+              >
+                キャンセル
+              </Link>
+            </div>
+          )}
+
+          {/* URLモードの時はキャンセルボタンのみ */}
+          {!manualMode && (
+            <div className="pt-4">
+              <Link
+                href="/templates"
+                className="block w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center"
+              >
+                キャンセル
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>
