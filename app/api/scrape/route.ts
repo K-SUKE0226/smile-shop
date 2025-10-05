@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 複数のURLから共通パターンを学習してテンプレートを生成
-    const titles = validResults.map((r) => r.title);
-    const descriptions = validResults.map((r) => r.description);
+    const titles = validResults.map((r) => r.title).filter((t): t is string => !!t);
+    const descriptions = validResults.map((r) => r.description).filter((d): d is string => !!d);
 
     // タイトルのテンプレート生成
     const titleTemplate = generateTitleTemplate(titles);
